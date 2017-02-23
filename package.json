@@ -1,0 +1,32 @@
+{
+  "name": "curry-map",
+  "version": "0.0.1",
+  "description": "Currying with pathways",
+  "main": "./lib/index.js",
+  "scripts": {
+    "test": "mocha --recursive ./test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Kequc/curry-map.git"
+  },
+  "keywords": [
+    "curry",
+    "function",
+    "map",
+    "object",
+    "util",
+    "deep",
+    "curry"
+  ],
+  "author": "mr.kequc@gmail.com",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Kequc/curry-map/issues"
+  },
+  "homepage": "http://www.kequc.com",
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^2.4.5"
+  }
+}
