@@ -32,12 +32,12 @@ const CurryMap = require('curry-map');
 
 const paths = {
     batman: CurryMap({
-        batarang: () => console.log('shwiiiing');
-        parents: () => console.log('...');
+        batarang: () => 'shwiiiing',
+        parents: () => '...'
     }),
     joker: CurryMap({
-        laugh: () => console.log('HaHAhahA');
-        do_taxes: () => console.log('HAhaHAHAHa');
+        laugh: () => 'HaHAhahA',
+        do_taxes: () => 'HAhaHAHAHa'
     })
 };
 
@@ -56,12 +56,12 @@ Note: One single `()` follows *only* the primary definition.
 The first parameter of `CurryMap` is always an object containing api endpoints. An optional second parameter indicates any other input should it not be in the arguments list, for example a document id or database name should you need them. Things start to get complicated here be vigilant.
 
 ```javascript
-const default = CurryMap({
-    say_hi: (name) => console.log('Hi ' + name + '!');
-    say_goodbye: (name) => console.log('Goodbye ' + name + '! :(');
+const capts = CurryMap({
+    say_hi: (name) => 'Hi ' + name + '!',
+    say_goodbye: (name) => 'Goodbye ' + name + '! :('
 });
 
-const mySecondApi = CurryMap(paths, default)();
+const mySecondApi = CurryMap(paths, capts)();
 
 mySecondApi('batman', 'batarang');
 mySecondApi('Keith', 'say_hi');
@@ -74,12 +74,12 @@ mySecondApi('Keith', 'say_hi');
 Any default CurryMap captures input and delivers it to the endpoint, you can do this many times.
 
 ```javascript
-const ageify = (name, age) => console.log(name + ' is ' + age);
-const deepPaths = CurryMap({
-    run: ageify;
-});
+const ageify = (name, age) => name + ' is ' + age;
+const deep = {
+    run: ageify
+};
 
-const myThirdApi = CurryMap({}, CurryMap({}, deepPaths))();
+const myThirdApi = CurryMap({}, CurryMap({}, CurryMap(deep)))();
 
 myThirdApi('Becca', 31, 'run');
 ```
@@ -92,7 +92,7 @@ myThirdApi('Becca', 31, 'run');
 The following is equivalent to the above.
 
 ```javascript
-const myFourthApi = CurryMap.capture(2, deepPaths)();
+const myFourthApi = CurryMap.capture(2, deep)();
 
 myFourthApi('Ruddiger', 11, 'run');
 ```
