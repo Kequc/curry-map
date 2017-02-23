@@ -11,7 +11,9 @@ npm i curry-map --save
 
 ### How do I use this library?
 
-Brace yourself. Not for the faint fo heart. Okay maybe I'm exagerating a bit, but it looks complicated bear with me. Currying is the ability to pass parameters to a function all at once or one at a time.
+Brace yourself. Not for the faint fo heart.
+
+Okay maybe I'm exaggerating a bit, but it looks complicated bear with me. Currying is the ability to pass parameters to a function all at once or one at a time.
 
 ```javascript
 // all equivalent

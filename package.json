@@ -1,11 +1,14 @@
 {
   "name": "curry-map",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Currying with pathways",
   "main": "./lib/index.js",
   "scripts": {
     "test": "mocha --recursive ./test"
   },
+  "files": [
+    "lib/"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Kequc/curry-map.git"

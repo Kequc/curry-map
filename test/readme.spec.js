@@ -2,7 +2,7 @@
 const mocha = require('mocha');
 const expect = require('chai').expect;
 
-const CurryMap = require('../lib/curry-map');
+const CurryMap = require('../lib/index');
 
 describe('readme', function() {
     it('can do everything in the readme', function() {
