@@ -77,43 +77,70 @@ Any default CurryMap captures input and delivers it to the endpoint, you can do 
 
 ```javascript
 const ageify = (name, age) => name + ' is ' + age;
-const deep = {
-    run: ageify
-};
 
-const myThirdApi = CurryMap({}, CurryMap({}, CurryMap(deep)))();
+const myThirdApi = CurryMap({}, CurryMap({}, ageify))();
 
-myThirdApi('Becca', 31, 'run');
+myThirdApi('Becca', 31);
 ```
 ```
 #=> Becca is 31
 ```
 
-### Capture helper to clean up
+### Deep helper to clean up
 
 The following is equivalent to the above.
 
 ```javascript
-const myFourthApi = CurryMap.capture(2, deep)();
+const myFourthApi = CurryMap.deep(2, ageify)();
 
-myFourthApi('Ruddiger', 11, 'run');
+myFourthApi('Ruddiger', 11);
 ```
 ```
 #=> Ruddiger is 11
 ```
 
-### Out helper to exit right away
-
-If you would like to capture some input and exit right away.
+You can also keep things going if you want to with another CurryMap.
 
 ```javascript
-const myFifthApi = CurryMap.out(2, ageify)()
+const myFifthApi = CurryMap.deep(2, CurryMap({ run: ageify }))();
 
-myFifthApi('Felix', 112);
+myFifthApi('Ruddiger', 11, 'run');
 ```
 ```
-#=> Felix is 112
+#=> Ruddiger is 11
 ```
+
+### Extending the prototype
+
+You may want to be able to stop and use the function's prototype short of the final endpoint.
+
+```javascript
+const mySixthApi = CurryMap({
+    superman: CurryMap({
+        fly: () => 'Swoooosh',
+        turn_back_time: () => 'Swoooooooooooosh',
+        arms: CurryMap({
+            punch: () => 'WHAMMO'
+        })
+    }, CurryMap({
+        smite: (who) => 'No more ' + who
+    }, {
+        threaten: (who) => (words) => 'Forsooth ' + who + '! ' + words,
+        address: (who) => (words) => 'Dearest ' + who + '. ' + words
+    }))
+})();
+
+mySixthApi('superman', 'bad guy').threaten('You are out of time.');
+mySixthApi('superman', 'arms', 'punch');
+mySixthApi('superman', 'citizens').address('Celebrate!');
+```
+```
+#=> Forsooth bad guy! You are out of time.
+#=> WHAMMO
+#=> Dearest citizens. Celebrate!
+```
+
+The prototype extensions object can appear as either the second or third parameter. It is always a function accepting the curry up to that point, followed by what you want to exist.
 
 ### General considerations
 

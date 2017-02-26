@@ -32,20 +32,36 @@ describe('readme', function() {
         expect(mySecondApi('Keith', 'say_hi')).to.equal('Hi Keith!');
 
         const ageify = (name, age) => name + ' is ' + age;
-        const deep = {
-            run: ageify
-        };
 
-        const myThirdApi = CurryMap({}, CurryMap({}, CurryMap(deep)))();
+        const myThirdApi = CurryMap({}, CurryMap({}, ageify))();
 
-        expect(myThirdApi('Becca', 31, 'run')).to.equal('Becca is 31');
+        expect(myThirdApi('Becca', 31)).to.equal('Becca is 31');
 
-        const myFourthApi = CurryMap.capture(2, deep)();
+        const myFourthApi = CurryMap.deep(2, ageify)();
 
-        expect(myFourthApi('Ruddiger', 11, 'run')).to.equal('Ruddiger is 11');
+        expect(myFourthApi('Ruddiger', 11)).to.equal('Ruddiger is 11');
 
-        const myFifthApi = CurryMap.out(2, ageify)()
+        const myFifthApi = CurryMap.deep(2, CurryMap({ run: ageify }))();
 
-        expect(myFifthApi('Felix', 112)).to.equal('Felix is 112');
+        myFifthApi('Ruddiger', 11, 'run');
+
+        const mySixthApi = CurryMap({
+            superman: CurryMap({
+                fly: () => 'Swoooosh',
+                turn_back_time: () => 'Swoooooooooooosh',
+                arms: CurryMap({
+                    punch: () => 'WHAMMO'
+                })
+            }, CurryMap({
+                smite: (who) => 'No more ' + who
+            }, {
+                threaten: (who) => (words) => 'Forsooth ' + who + '! ' + words,
+                address: (who) => (words) => 'Dearest ' + who + '. ' + words
+            }))
+        })();
+
+        expect(mySixthApi('superman', 'bad guy').threaten('You are out of time.')).to.equal('Forsooth bad guy! You are out of time.');
+        expect(mySixthApi('superman', 'arms', 'punch')).to.equal('WHAMMO');
+        expect(mySixthApi('superman', 'citizens').address('Celebrate!')).to.equal('Dearest citizens. Celebrate!');
     });
 });
