@@ -53,7 +53,7 @@ myApi('joker', 'laugh');
 
 Note: One single `()` follows *only* the primary definition.
 
-### Capturing default input
+### Capturing input
 
 The first parameter of `CurryMap` is always an object containing api endpoints. An optional second parameter indicates any other input should it not be in the arguments list, for example a document id or database name should you need them. Things start to get complicated here be vigilant.
 
@@ -73,7 +73,7 @@ mySecondApi('Keith', 'say_hi');
 #=> Hi Keith!
 ```
 
-Any default CurryMap captures input and delivers it to the endpoint, you can do this many times.
+Any function-type second parameter captures input, you can do this many times.
 
 ```javascript
 const ageify = (name, age) => name + ' is ' + age;
@@ -86,17 +86,17 @@ myThirdApi('Becca', 31);
 #=> Becca is 31
 ```
 
-### Deep helper to clean up
+### Capture helper
 
-The following is equivalent to the above.
+The following is equivalent to above.
 
 ```javascript
 const myFourthApi = CurryMap.deep(2, ageify)();
 
-myFourthApi('Ruddiger', 11);
+myFourthApi('Becca', 31);
 ```
 ```
-#=> Ruddiger is 11
+#=> Becca is 31
 ```
 
 You can also keep things going if you want to with another CurryMap.
@@ -104,15 +104,15 @@ You can also keep things going if you want to with another CurryMap.
 ```javascript
 const myFifthApi = CurryMap.deep(2, CurryMap({ run: ageify }))();
 
-myFifthApi('Ruddiger', 11, 'run');
+myFifthApi('Ruddiger', 112, 'run');
 ```
 ```
-#=> Ruddiger is 11
+#=> Ruddiger is 112
 ```
 
 ### Extending the prototype
 
-You may want to be able to stop and use the function's prototype short of the final endpoint.
+Prototype extensions are passed with either the second or third parameter. Its attributes are always functions which accept the curry up to that point, followed by what you want to return.
 
 ```javascript
 const mySixthApi = CurryMap({
@@ -122,9 +122,7 @@ const mySixthApi = CurryMap({
         arms: CurryMap({
             punch: () => 'WHAMMO'
         })
-    }, CurryMap({
-        smite: (who) => 'No more ' + who
-    }, {
+    }, CurryMap({}, {
         threaten: (who) => (words) => 'Forsooth ' + who + '! ' + words,
         address: (who) => (words) => 'Dearest ' + who + '. ' + words
     }))
@@ -140,9 +138,9 @@ mySixthApi('superman', 'citizens').address('Celebrate!');
 #=> Dearest citizens. Celebrate!
 ```
 
-The prototype extensions object can appear as either the second or third parameter. It is always a function accepting the curry up to that point, followed by what you want to exist.
-
 ### General considerations
+
+A `CurryMap` is a function accepting `(...curry)` as its parameters, it returns a function with optional prototype extensions whch when run traverses further.
 
 When you compile a complex CurryMap it's going to look like a big huge mess. I'm not sure what to tell you about how to fix that. Some kind of extreme discipline is probably required in order to keep it looking sane and manageable, or if you have a robot eye you may be able to understand all of the paths.
 

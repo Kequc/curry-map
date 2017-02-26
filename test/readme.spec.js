@@ -39,11 +39,11 @@ describe('readme', function() {
 
         const myFourthApi = CurryMap.deep(2, ageify)();
 
-        expect(myFourthApi('Ruddiger', 11)).to.equal('Ruddiger is 11');
+        expect(myFourthApi('Becca', 31)).to.equal('Becca is 31');
 
         const myFifthApi = CurryMap.deep(2, CurryMap({ run: ageify }))();
 
-        myFifthApi('Ruddiger', 11, 'run');
+        expect(myFifthApi('Ruddiger', 112, 'run')).to.equal('Ruddiger is 112');
 
         const mySixthApi = CurryMap({
             superman: CurryMap({
@@ -52,9 +52,7 @@ describe('readme', function() {
                 arms: CurryMap({
                     punch: () => 'WHAMMO'
                 })
-            }, CurryMap({
-                smite: (who) => 'No more ' + who
-            }, {
+            }, CurryMap({}, {
                 threaten: (who) => (words) => 'Forsooth ' + who + '! ' + words,
                 address: (who) => (words) => 'Dearest ' + who + '. ' + words
             }))
