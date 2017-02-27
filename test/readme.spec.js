@@ -53,7 +53,7 @@ describe('readme', function() {
             fly: () => 'Swoooosh',
             turn_back_time: () => 'Swoooooooooooosh',
             _: CurryMap({
-                punch: (who) => 'WHAMMO',
+                punch: (who) => 'WHAMMO ' + who,
                 proto: {
                     threaten: (who) => (words) => 'Forsooth ' + who + '! ' + words,
                     address: (who) => (words) => 'Dearest ' + who + '. ' + words
@@ -64,7 +64,7 @@ describe('readme', function() {
         const mySixthApi = CurryMap({ superman })();
 
         expect(mySixthApi('superman', 'bad guy').threaten('You are out of time.')).to.equal('Forsooth bad guy! You are out of time.');
-        expect(mySixthApi('superman', 'bad guy', 'punch')).to.equal('WHAMMO');
+        expect(mySixthApi('superman', 'bad guy', 'punch')).to.equal('WHAMMO bad guy');
         expect(mySixthApi('superman', 'citizens').address('Celebrate!')).to.equal('Dearest citizens. Celebrate!');
     });
 });

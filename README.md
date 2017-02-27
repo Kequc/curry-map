@@ -55,7 +55,7 @@ Note: One single `()` follows *only* the primary definition.
 
 ### Capturing input
 
-`CurryMap` requires an object containing api endpoints as a first parameter. Optionally provide an `_` indicating any other input should it not be in the arguments list, for example a document id or database name should you need them. Things start to get complicated here be vigilant.
+`CurryMap` requires an object containing api endpoints as a first parameter. Optionally provide `_` indicating any other input should it not be in the arguments list, for example a document id or database name should you need them. Things start to get complicated here be vigilant.
 
 ```javascript
 const mySecondApi = CurryMap({
@@ -104,7 +104,7 @@ myFourthApi('Felicity', 31);
 #=> Felicity is 31
 ```
 
-You can also keep things going if you want to with another CurryMap.
+You can also keep things going with another CurryMap.
 
 ```javascript
 const myFifthApi = CurryMap.deep(2, CurryMap({ run: ageify }))();
@@ -117,14 +117,14 @@ myFifthApi('Ruddiger', 112, 'run');
 
 ### Extending the prototype
 
-Prototype extensions are passed with the `proto` keyword. It's an object whose values are functions which accept the curry followed by whatever you want to return.
+Prototype extensions are passed with the `proto` keyword. It's an object whose values are functions which accept the curry so far.
 
 ```javascript
 const superman = CurryMap({
     fly: () => 'Swoooosh',
     turn_back_time: () => 'Swoooooooooooosh',
     _: CurryMap({
-        punch: (who) => 'WHAMMO',
+        punch: (who) => 'WHAMMO ' + who,
         proto: {
             threaten: (who) => (words) => 'Forsooth ' + who + '! ' + words,
             address: (who) => (words) => 'Dearest ' + who + '. ' + words
@@ -140,13 +140,13 @@ mySixthApi('superman', 'citizens').address('Celebrate!');
 ```
 ```
 #=> Forsooth bad guy! You are out of time.
-#=> WHAMMO
+#=> WHAMMO bad guy
 #=> Dearest citizens. Celebrate!
 ```
 
 ### General considerations
 
-A `CurryMap` is a function accepting `(...curry)` as its parameters returning a function whch when run traverses further.
+A `CurryMap` is a function accepting `(...curry)` as its parameters returning a function whch can be used to traverse further.
 
 When you compile a complex CurryMap it's going to look a bit like big mess. I'm not sure what to tell you about how to fix that. Some kind of extreme discipline is probably required in order to keep it looking sane and manageable, or if you have a robot eye you may be able to understand all of the paths.
 
