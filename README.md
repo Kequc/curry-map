@@ -55,35 +55,40 @@ Note: One single `()` follows *only* the primary definition.
 
 ### Capturing input
 
-The first parameter of `CurryMap` is always an object containing api endpoints. An optional second parameter indicates any other input should it not be in the arguments list, for example a document id or database name should you need them. Things start to get complicated here be vigilant.
+`CurryMap` requires an object containing api endpoints as a first parameter. Optionally provide an `_` indicating any other input should it not be in the arguments list, for example a document id or database name should you need them. Things start to get complicated here be vigilant.
 
 ```javascript
-const capts = CurryMap({
-    say_hi: (name) => 'Hi ' + name + '!',
-    say_goodbye: (name) => 'Goodbye ' + name + '! :('
-});
+const mySecondApi = CurryMap({
+    batman: CurryMap({
+        say_hi: () => 'I am the night.'
+    }),
+    _: CurryMap({
+        say_hi: (name) => 'Hi ' + name + '!',
+        say_goodbye: (name) => 'Goodbye ' + name + '! :('
+    })
+})();
 
-const mySecondApi = CurryMap(paths, capts)();
-
-mySecondApi('batman', 'batarang');
-mySecondApi('Keith', 'say_hi');
+mySecondApi('batman', 'say_hi');
+mySecondApi('Jacob', 'say_hi');
+mySecondApi('Brooke', 'say_goodbye');
 ```
 ```
-#=> shwiiiing
-#=> Hi Keith!
+#=> I am the night.
+#=> Hi Jacob!
+#=> Goodbye Brooke! :(
 ```
 
-Any function-type second parameter captures input, you can do this many times.
+You can do this many times.
 
 ```javascript
 const ageify = (name, age) => name + ' is ' + age;
 
-const myThirdApi = CurryMap({}, CurryMap({}, ageify))();
+const myThirdApi = CurryMap({ _: CurryMap({ _: ageify }) })();
 
-myThirdApi('Becca', 31);
+myThirdApi('Felicity', 31);
 ```
 ```
-#=> Becca is 31
+#=> Felicity is 31
 ```
 
 ### Capture helper
@@ -93,10 +98,10 @@ The following is equivalent to above.
 ```javascript
 const myFourthApi = CurryMap.deep(2, ageify)();
 
-myFourthApi('Becca', 31);
+myFourthApi('Felicity', 31);
 ```
 ```
-#=> Becca is 31
+#=> Felicity is 31
 ```
 
 You can also keep things going if you want to with another CurryMap.
@@ -112,24 +117,25 @@ myFifthApi('Ruddiger', 112, 'run');
 
 ### Extending the prototype
 
-Prototype extensions are passed with either the second or third parameter. Its attributes are always functions which accept the curry up to that point, followed by what you want to return.
+Prototype extensions are passed with the `proto` keyword. It's an object whose values are functions which accept the curry followed by whatever you want to return.
 
 ```javascript
-const mySixthApi = CurryMap({
-    superman: CurryMap({
-        fly: () => 'Swoooosh',
-        turn_back_time: () => 'Swoooooooooooosh',
-        arms: CurryMap({
-            punch: () => 'WHAMMO'
-        })
-    }, CurryMap({}, {
-        threaten: (who) => (words) => 'Forsooth ' + who + '! ' + words,
-        address: (who) => (words) => 'Dearest ' + who + '. ' + words
-    }))
-})();
+const superman = CurryMap({
+    fly: () => 'Swoooosh',
+    turn_back_time: () => 'Swoooooooooooosh',
+    _: CurryMap({
+        punch: (who) => 'WHAMMO',
+        proto: {
+            threaten: (who) => (words) => 'Forsooth ' + who + '! ' + words,
+            address: (who) => (words) => 'Dearest ' + who + '. ' + words
+        }
+    })
+});
+
+const mySixthApi = CurryMap({ superman })();
 
 mySixthApi('superman', 'bad guy').threaten('You are out of time.');
-mySixthApi('superman', 'arms', 'punch');
+mySixthApi('superman', 'bad guy', 'punch');
 mySixthApi('superman', 'citizens').address('Celebrate!');
 ```
 ```
@@ -140,9 +146,9 @@ mySixthApi('superman', 'citizens').address('Celebrate!');
 
 ### General considerations
 
-A `CurryMap` is a function accepting `(...curry)` as its parameters, it returns a function with optional prototype extensions whch when run traverses further.
+A `CurryMap` is a function accepting `(...curry)` as its parameters returning a function whch when run traverses further.
 
-When you compile a complex CurryMap it's going to look like a big huge mess. I'm not sure what to tell you about how to fix that. Some kind of extreme discipline is probably required in order to keep it looking sane and manageable, or if you have a robot eye you may be able to understand all of the paths.
+When you compile a complex CurryMap it's going to look a bit like big mess. I'm not sure what to tell you about how to fix that. Some kind of extreme discipline is probably required in order to keep it looking sane and manageable, or if you have a robot eye you may be able to understand all of the paths.
 
 ### Contribute
 

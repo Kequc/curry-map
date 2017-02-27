@@ -9,31 +9,37 @@ const myApi = CurryMap({
         _level2: CurryMap({
             _level3: CurryMap({
                 _level4: (...curry) => curry
-            })
-        }, CurryMap({
-            _alt1: CurryMap({}, (...curry) => curry, {
-                test: (...curry) => (...args) => [curry, args]
             }),
-            _alt2: (...curry) => curry,
-            _alt3: CurryMap.deep(1, (...curry) => curry),
-            _alt4: CurryMap.deep(3, (...curry) => curry)
-        }))
-    }, CurryMap({
-        _db1: CurryMap.deep(1, CurryMap({
-            _db2: CurryMap({
-                _db3: (...curry) => curry
+            _: CurryMap({
+                _alt1: CurryMap({
+                    proto: {
+                        test: (...curry) => (...args) => [curry, args]
+                    },
+                    _: (...curry) => curry
+                }),
+                _alt2: (...curry) => curry,
+                _alt3: CurryMap.deep(1, (...curry) => curry),
+                _alt4: CurryMap.deep(3, (...curry) => curry)
             })
-        })),
-        _multi: CurryMap.deep(3, CurryMap({
-            _output: (...curry) => curry
-        })),
-        _prots1: CurryMap({
-            _prots2: (...curry) => curry
-        }, {
-            testing: (...curry) => (...args) => [curry, args]
         }),
-        _output: (...curry) => curry
-    }))
+        _: CurryMap({
+            _db1: CurryMap.deep(1, CurryMap({
+                _db2: CurryMap({
+                    _db3: (...curry) => curry
+                })
+            })),
+            _multi: CurryMap.deep(3, CurryMap({
+                _output: (...curry) => curry
+            })),
+            _prots1: CurryMap({
+                proto: {
+                    testing: (...curry) => (...args) => [curry, args]
+                },
+                _prots2: (...curry) => curry
+            }),
+            _output: (...curry) => curry
+        })
+    })
 })();
 
 describe('CurryMap', function() {
@@ -64,27 +70,26 @@ describe('CurryMap', function() {
         });
     });
     describe('prototype', function() {
+        it('accepts prototype extensions', function () {
+            const proto = { hooray: (...curry) => (arg1) => 'success ' + arg1 };
+            expect(CurryMap({ proto })().hooray('yay')).to.equal('success yay');
+        });
         it('throws on prototype not a function', function () {
-            expect(() => CurryMap({}, { hello: 'oops' })()).to.throw();
-            expect(() => CurryMap({}, { hello: { hi: 'oops' } })()).to.throw();
+            expect(() => CurryMap({ proto: { hello: 'oops' } })()).to.throw();
+            expect(() => CurryMap({ proto: { hello: { hi: 'oops' } } })()).to.throw();
         });
         it('throws on restricted prototypes', function () {
-            expect(() => CurryMap({}, { call: () => 'ooops' })()).to.throw();
-            expect(() => CurryMap({}, { bind: () => 'ooops' })()).to.throw();
-            expect(() => CurryMap({}, { apply: () => 'ooops' })()).to.throw();
-            expect(() => CurryMap({}, { toString: () => 'ooops' })()).to.throw();
+            expect(() => CurryMap({ proto: { call: () => 'ooops' } })()).to.throw();
+            expect(() => CurryMap({ proto: { bind: () => 'ooops' } })()).to.throw();
+            expect(() => CurryMap({ proto: { apply: () => 'ooops' } })()).to.throw();
+            expect(() => CurryMap({ proto: { toString: () => 'ooops' } })()).to.throw();
         });
-        it('sets and runs prototype extensions', function () {
+        it('runs deep prototype extensions', function () {
             expect(myApi('_level1', '_level2', 'Testing!', '_alt1').test('arg-1', 'arg-2')).to.eql([['Testing!'], ['arg-1', 'arg-2']]);
             expect(myApi('_level1', 'foo', '_prots1').testing('arg-3', 'arg-4')).to.eql([['foo'], ['arg-3', 'arg-4']]);
         });
-        it('can bypass prototype extensions', function () {
+        it('can keep traversing past prototype extensions', function () {
             expect(myApi('_level1', 'hi', '_prots1', '_prots2')).to.eql(['hi']);
-        });
-        it('acceps prototype extensions as a second argument', function () {
-            const prot = { hooray: (...curry) => (arg1) => 'success ' + arg1 };
-            expect(CurryMap({}, undefined, prot)().hooray('yay')).to.equal('success yay');
-            expect(CurryMap({}, prot)().hooray('yay')).to.equal('success yay');
         });
     });
     describe('deep', function() {
@@ -92,7 +97,7 @@ describe('CurryMap', function() {
             expect(() => CurryMap.deep(1, () => {})).to.not.throw();
         });
         it('thows on invalid number', function () {
-            expect(() => CurryMap.deep(0, () => {})).to.throw();
+            expect(() => CurryMap.deep({}, () => {})).to.throw();
             expect(() => CurryMap.deep('oops', () => {})).to.throw();
             expect(() => CurryMap.deep(undefined, () => {})).to.throw();
         });
